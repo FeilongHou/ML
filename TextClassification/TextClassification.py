@@ -5,7 +5,7 @@ import numpy as np
 # load in movie review
 data = keras.datasets.imdb
 
-(train_data, train_labels), (test_data, test_labels) = data.load_data(num_words = 10000) # only take 10000 most frequenly used words
+(train_data, train_labels), (test_data, test_labels) = data.load_data(num_words = 88000) # only take 10000 most frequenly used words
 
 #print(train_data[0])
 
@@ -29,13 +29,13 @@ def decode_review(text):  # text is a list
     return " ".join([reverse_word_index.get(word, "?") for word in text]) # "?" if the value did not map to any word
 
 #print(decode_review(train_data[0]))
-
+"""
 model = keras.Sequential()
 # randomly create 10000 word vectors(each of 16D) input list will grab corresponding vector and pass it to next layer
 # for example, [1,5, 11, 255] grab number 1 5 11 255 vector and pass
 # if we have "great" and "good" as 2 vectors, we want them to get close to each other
 # it will return 16 dimensional data
-model.add(keras.layers.Embedding(10000, 16))
+model.add(keras.layers.Embedding(88000, 16))
 # it takes 16 dimensional data and reduced to 1D 
 model.add(keras.layers.GlobalAveragePooling1D())
 model.add(keras.layers.Dense(16, activation = "relu"))
@@ -58,6 +58,8 @@ fitModel = model.fit(x_train, y_train, epochs = 40, batch_size = 512, validation
 results = model.evaluate(test_data, test_labels)
 print(results) # gives [loss, accuracy]
 
+model.save("TextClassifier.h5")
+
 # see how the model performe
 test_review = test_data[0]
 prediction = model.predict([test_review])
@@ -65,3 +67,28 @@ print("Review: ")
 print(decode_review(test_review))
 print("Prediction: " + str(np.round(prediction[0])))
 print("Actual: " + str(test_labels[0]))
+"""
+model = keras.models.load_model("TextClassifier.h5")
+
+def encoding(text):
+    encoded = [1] # 1 meaning start
+    for word in text:
+        if word in word_index:
+            encoded.append(word_index[word])
+        else:
+            encoded.append(2) # else give an unknow characater
+    
+    return encoded
+
+with open("Review.txt") as f:
+    for line in f.readlines():
+        # remove special characters
+        nline = line.replace(",", "").replace(".", "").replace("\'","").replace("-","").replace("(", "").replace(")", "").replace(":", "").replace("\"","").strip().split(" ")
+        encode = encoding(nline)
+        encode = keras.preprocessing.sequence.pad_sequences([encode], value = word_index["<PAD>"], padding = "post", maxlen = 250)
+        prediction = model.predict(encode)
+        print(line)
+        print(encode)
+        print(prediction[0])
+
+
