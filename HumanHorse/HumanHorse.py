@@ -63,7 +63,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dropout(0.5),  # drop some neurons for faster computation
     tf.keras.layers.Dense(512, activation = 'relu'),
-    tf.keras.layers.Dense(2, activation = 'tanh')
+    tf.keras.layers.Dense(1, activation = 'sigmoid')
     ])
 
 
