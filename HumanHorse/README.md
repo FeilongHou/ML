@@ -18,6 +18,6 @@ Human:\
 Horse:\
 ![Horse_test](https://github.com/FeilongHou/ML/blob/main/HumanHorse/horse1.jpg)
 
-This AI is able to achieve 80% accuracy on read images recognation.
+This AI is able to achieve 80% accuracy on real images recognation.
 
 **Testing Images Are From The Internet**
